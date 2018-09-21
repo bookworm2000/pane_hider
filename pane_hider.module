@@ -1,0 +1,45 @@
+<?php
+
+/**
+ * Implementation of hook_panels_pre_render()
+ * Fired before a panels display is rendered. Last chance to modify the panels display before rendering.
+ * Used in this module to hide panel elements with empty content. Specifically, field_address needs to be checked.
+ *
+ * @param panels_display $panels_display
+ *   The panels display that will be rendered.
+ * @param stdClass $renderer
+ *   The renderer object that will be used to render.
+ */
+function pane_hider_panels_pre_render($panels_display, $renderer) {
+
+  //Only proceed if there is actually panel content
+  if (!empty($panels_display->content)) {
+
+    //Retrieve the node id from the args
+	if (count($panels_display->args) == 1) {
+	  $nid = $panels_display->args[0];
+      $node = node_load($nid);
+
+      //Check the address field for content for that node
+      if (empty($node->field_address)) {
+
+        //Retrieve the pid from the panel for field_address. Initialize to -1.
+        $address_pid = -1;
+        foreach($panels_display->content as $key) {
+          if ($key->subtype == 'node:field_address') {
+            $address_pid = $key->pid;
+          }
+        }
+
+        //If a pid is found and the address field is indeed empty, remove it from the panel so it will not display
+        if ($address_pid) {
+          unset($panels_display->content[$address_pid]);
+        }
+
+      }
+
+	}
+
+  }
+
+}

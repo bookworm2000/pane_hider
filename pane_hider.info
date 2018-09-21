@@ -1,0 +1,6 @@
+name = Lib panels
+description = Contains an implementation of hook_ctools_plugin_directory() to add a custom visibility rule.
+core = "7.x"
+dependencies[] = panels
+dependencies[] = ctools
+datestamp = "1537483241"
